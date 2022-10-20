@@ -10,18 +10,31 @@ let previousOperand = ''
 let currentOperand = ''
 let operator = ''
 
+const getDisplayNumber = (number) => {
+  const stringNumber = number.toString()
+  const integerDigits = parseFloat(stringNumber.split('.')[0])
+  const decimalDigits = stringNumber.split('.')[1]
+  let integerDisplay
+  if (isNaN(integerDigits)) {
+    integerDisplay = ''
+  } else {
+    integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
+  }
+  if (decimalDigits != null) {
+    return `${integerDisplay}.${decimalDigits}`
+  } else {
+    return integerDisplay
+  }
+}
+
 const updateScreen = () => {
-  console.log(currentOperand.toString().length === 9)
-  if (currentOperand.toString().length > 9) return
-  // else if (currentOperand.toString().length > 6 && operator !== '') {
-  //   return displayResultElement.innerText = parseFloat(currentOperand).toExponential(2)
-  // }
-  else if (currentOperand === '' && previousOperand === '') return
+  if (currentOperand === '' && previousOperand === '') return
   return displayResultElement.innerText = currentOperand
 }
 
 const appendNumber = (num) => {
   if (num === '.' && currentOperand.toString().includes('.')) return
+  else if (currentOperand.toString().length === 9) return
   currentOperand = currentOperand.toString() + num.toString()
   updateScreen()
 }
@@ -42,7 +55,7 @@ const compute = () => {
       result = previous - current
       break
     case '/':
-      if (previous / 0) {
+      if (previous / current === Infinity) {
         result = 'Oops!'
         break
       }
@@ -50,6 +63,10 @@ const compute = () => {
       break
     default:
       return
+  }
+  if (result.toString().length > 9) {
+    currentOperand = parseFloat(result).toExponential(2)
+    return previousOperand = ''
   }
   currentOperand = result
   previousOperand = ''
