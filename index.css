@@ -1,0 +1,93 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: rgb(240, 255, 255);
+  --black: #000;
+  --dark: rgb(47, 47, 47);
+  --grey: #b2b9b7;
+  --orange: #ff8f1f;
+  --blue: dodgerblue;
+  --green: #217c7e;
+
+  --fs-operand: 5.5em;
+  --fs-buttons: 2em;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  font-family: monospace;
+  background-color: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.calculator-container {
+  width: 426px;
+  height: 532px;
+  background-color: var(--black);
+  border: 10px solid var(--dark);
+  border-radius: 4px;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column: 10px;
+}
+
+button {
+  width: 98px;
+  height: 78px;
+  margin: 1px;
+  font-family: monospace;
+  font-size: var(--fs-buttons);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.operand {
+  margin: 5px;
+  padding: 5px;
+  height: 82px;
+  font-size: var(--fs-operand);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+  background-color: var(--grey);
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.zero {
+  width: 200px;
+  grid-column: 1 / 3;
+}
+
+.equals,
+.operator {
+  background-color: var(--orange);
+}
+
+.clear,
+.sign,
+.percentage {
+  background-color: var(--blue);
+}
+
+.number {
+  background-color: var(--green);
+}
