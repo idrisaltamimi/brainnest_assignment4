@@ -4,7 +4,17 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'MyriadPro-Regular';
+  src: url('./fonts/MyriadPro-Regular.otf');
+  /* src: url("CustomFont.woff") format("woff"),
+    url("CustomFont.otf") format("opentype"),
+    url("CustomFont.svg#filename") format("svg"); */
+}
+
 :root {
+  --ff-primary: 'MyriadPro-Regular', sans-serif;
+
   --bg: rgb(240, 255, 255);
   --black: #000;
   --dark: rgb(47, 47, 47);
@@ -13,8 +23,8 @@
   --blue: dodgerblue;
   --green: #217c7e;
 
-  --fs-operand: 5.5em;
-  --fs-buttons: 2em;
+  --fs-operand: 5.2rem;
+  --fs-buttons: 1.4rem;
 }
 
 html {
@@ -24,7 +34,7 @@ html {
 body {
   min-height: 100%;
   margin: 0;
-  font-family: monospace;
+  font-family: var(--ff-primary);
   background-color: var(--bg);
   display: flex;
   justify-content: center;
@@ -47,7 +57,7 @@ button {
   width: 98px;
   height: 78px;
   margin: 1px;
-  font-family: monospace;
+  font-family: var(--ff-primary);
   font-size: var(--fs-buttons);
   border: 0;
   border-radius: 4px;
