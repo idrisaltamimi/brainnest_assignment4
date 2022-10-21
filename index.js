@@ -1,40 +1,25 @@
-const displayResultElement = document.querySelector('.operand')
+const screenTextElement = document.querySelector('.screen')
 const numberButtons = document.querySelectorAll('.number')
 const operatorButtons = document.querySelectorAll('.operator')
 const clearButton = document.querySelector('.clear')
 const signButton = document.querySelector('.sign')
 const percentageButton = document.querySelector('.percentage')
+const deleteButton = document.querySelector('.delete')
 const equalsButton = document.querySelector('.equals')
-
 let previousOperand = ''
 let currentOperand = ''
-let operator = ''
-
-const getDisplayNumber = (number) => {
-  const stringNumber = number.toString()
-  const integerDigits = parseFloat(stringNumber.split('.')[0])
-  const decimalDigits = stringNumber.split('.')[1]
-  let integerDisplay
-  if (isNaN(integerDigits)) {
-    integerDisplay = ''
-  } else {
-    integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
-  }
-  if (decimalDigits != null) {
-    return `${integerDisplay}.${decimalDigits}`
-  } else {
-    return integerDisplay
-  }
-}
+let currentOperator = ''
 
 const updateScreen = () => {
   if (currentOperand === '' && previousOperand === '') return
-  return displayResultElement.innerText = currentOperand
+  else if (currentOperand.toString().length > 9) {
+    currentOperand = currentOperand.toString().slice(0, 9)
+  }
+  return screenTextElement.innerText = currentOperand
 }
 
 const appendNumber = (num) => {
   if (num === '.' && currentOperand.toString().includes('.')) return
-  else if (currentOperand.toString().length === 9) return
   currentOperand = currentOperand.toString() + num.toString()
   updateScreen()
 }
@@ -44,7 +29,7 @@ const compute = () => {
   const current = parseFloat(currentOperand)
   const previous = parseFloat(previousOperand)
   if (isNaN(current) || isNaN(previous)) return
-  switch (operator) {
+  switch (currentOperator) {
     case '+':
       result = previous + current
       break
@@ -73,7 +58,7 @@ const compute = () => {
 }
 
 const operate = (operatorValue) => {
-  operator = operatorValue
+  currentOperator = operatorValue
   if (currentOperand === '') return
   if (previousOperand !== '') {
     compute()
@@ -83,17 +68,66 @@ const operate = (operatorValue) => {
   currentOperand = ''
 }
 
+// lastDigit variable gets last digit when adding a negative sign to a 9 digits long number
+let lastDigit = ''
+const addSign = () => {
+  const current = currentOperand.toString()
+  if (current === '') return
+  else if (current.length === 9 && !current.includes('-')) {
+    lastDigit = current.slice(-1)
+    currentOperand = '-' + current.slice(0, -1)
+  } else {
+    if (current.length === 9 && lastDigit !== '') {
+      currentOperand = current * -1 + lastDigit
+    } else {
+      lastDigit = ''
+      currentOperand = current * -1
+    }
+  }
+  return updateScreen()
+}
+
+const addPercentage = () => {
+  currentOperand = currentOperand / 100
+  updateScreen()
+}
+
+const getResult = () => {
+  compute()
+  updateScreen()
+}
+
+const deleteDigit = () => {
+  if (currentOperand.toString().length === 1) {
+    currentOperand = ''
+    return screenTextElement.innerText = 0
+  }
+  currentOperand = currentOperand.toString().slice(0, -1)
+  updateScreen()
+}
+
 const clearScreen = () => {
   currentOperand = ''
   previousOperand = ''
-  operator = ''
-  displayResultElement.innerText = 0
+  currentOperator = ''
+  screenTextElement.innerText = 0
+}
+
+const copyResult = () => {
+  navigator.clipboard.writeText(screenTextElement.innerText)
+  const clipboardText = document.createElement('h1')
+  clipboardText.innerText = 'Copied to clipboard'
+  clipboardText.setAttribute('style', 'position: absolute; top: 0; left: 10px;')
+  document.body.appendChild(clipboardText)
+  setTimeout(() => {
+    document.body.removeChild(clipboardText)
+  }, 2000)
 }
 
 const handleKeyEvents = (keyValue, callback) => {
   document.addEventListener('keydown', event => {
+    console.log(event.key)
     if (event.key === keyValue) {
-      console.log(event.key)
       callback()
     }
   })
@@ -109,30 +143,18 @@ operatorButtons.forEach(button => {
   handleKeyEvents(button.innerText, () => operate(button.innerText))
 })
 
-signButton.addEventListener('click', () => {
-  currentOperand = currentOperand * -1
-  updateScreen()
-})
+signButton.addEventListener('click', addSign)
 
-//percentage Button mouse and keyboard events
-percentageButton.addEventListener('click', () => {
-  currentOperand = currentOperand / 100
-  updateScreen()
-})
-handleKeyEvents('%', () => {
-  currentOperand = currentOperand / 100
-  updateScreen()
-})
+percentageButton.addEventListener('click', addPercentage)
+handleKeyEvents('%', addPercentage)
 
-//equals Button mouse and keyboard events
-equalsButton.addEventListener('click', () => {
-  compute()
-  updateScreen()
-})
-handleKeyEvents('Enter', () => {
-  compute()
-  updateScreen()
-})
+equalsButton.addEventListener('click', getResult)
+handleKeyEvents('Enter', getResult)
+
+deleteButton.addEventListener('click', deleteDigit)
+handleKeyEvents('Backspace', deleteDigit)
 
 clearButton.addEventListener('click', clearScreen)
+handleKeyEvents('Escape', clearScreen)
 
+screenTextElement.addEventListener('click', copyResult)
