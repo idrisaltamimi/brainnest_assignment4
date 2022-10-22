@@ -24,7 +24,7 @@ const appendNumber = (num) => {
   updateScreen()
 }
 
-const compute = () => {
+const operate = () => {
   let result
   const current = parseFloat(currentOperand)
   const previous = parseFloat(previousOperand)
@@ -57,11 +57,11 @@ const compute = () => {
   previousOperand = ''
 }
 
-const operate = (operatorValue) => {
-  currentOperator = operatorValue
+const getOperator = (operator) => {
+  currentOperator = operator
   if (currentOperand === '') return
   if (previousOperand !== '') {
-    compute()
+    operate()
     updateScreen()
   }
   previousOperand = currentOperand
@@ -93,7 +93,7 @@ const addPercentage = () => {
 }
 
 const getResult = () => {
-  compute()
+  operate()
   updateScreen()
 }
 
@@ -139,8 +139,8 @@ numberButtons.forEach(button => {
 })
 
 operatorButtons.forEach(button => {
-  button.addEventListener('click', () => operate(button.innerText))
-  handleKeyEvents(button.innerText, () => operate(button.innerText))
+  button.addEventListener('click', () => getOperator(button.innerText))
+  handleKeyEvents(button.innerText, () => getOperator(button.innerText))
 })
 
 signButton.addEventListener('click', addSign)
